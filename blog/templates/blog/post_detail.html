@@ -5,9 +5,25 @@
 
 <hr/>
 
+
+{% load mptt_tags %}
+<ul>
+    {% recursetree comments %}
+        <li>
+            {{ node.author }}<br />
+            {{ node.text }}
+            {% if not node.is_leaf_node %}
+                <ul class="children">
+                    {{ children }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endrecursetree %}
+</ul>
+
 <h2>Zostaw komentarz</h2>
 <form action="" method="post">
-
-{{ form }}
-
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Wyślij" />
 </form>

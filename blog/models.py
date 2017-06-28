@@ -36,11 +36,11 @@ class Comment(MPTTModel):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     parent = TreeForeignKey('self', blank=True, null=True)
     author = models.CharField("Autor", max_length=255)
-    content = models.TextField("Komentarz")
+    text = models.TextField("Komentarz")
     pub_date = models.DateTimeField("Data publikacji", auto_now_add=True)
 
     def __str__(self):
-        return "%s:  %s" % (self.author, self.post)
+        return "%s:  %s" % (self.author, self.text)
 
 
 class Rating(models.Model):
