@@ -17,12 +17,16 @@
                     {{ children }}
                 </ul>
             {% endif %}
+            <form action="." method="post">
+                {% csrf_token %}
+
+            </form>
         </li>
     {% endrecursetree %}
 </ul>
 
 <h2>Zostaw komentarz</h2>
-<form action="" method="post">
+<form action="." method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Wyślij" />

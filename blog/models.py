@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls import reverse
 from django.template.defaultfilters import slugify
 from unidecode import unidecode
 from mptt.models import MPTTModel, TreeForeignKey
@@ -12,8 +11,9 @@ class Post(models.Model):
     pub_date = models.DateTimeField("Data publikacji", auto_now_add=True)
     last_modified = models.DateTimeField("Data aktualizacji", auto_now=True)
 
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.pk})
+        return ('post-detail', (), {'slug': self.slug})
 
     def save(self, *args, **kwargs):
         if not self.id:
