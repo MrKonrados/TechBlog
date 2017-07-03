@@ -1,33 +1,59 @@
-<h2>{{ post.title }}</h2>
+{% extends "blog/index.html" %}
 
-<div>Publikacja: {{ post.pub_date }} | Modyfikacja: {{ post.last_modified }}</div>
-<div>{{ post.content }}</div>
+{% block title %}{{ post.title }}{% endblock %}
 
-<hr/>
+{% block content %}
+    <h2>{{ post.title }}</h2>
+    <div>Publikacja: {{ post.pub_date }} | Modyfikacja: {{ post.last_modified }}</div>
+    <div>{{ post.content }}</div>
+    <hr/>
+    {% load mptt_tags %}
+    <ul>
+        {% recursetree comments %}
+            <li>
+                <p class="comment-author">{{ node.author }}</p>
+                <p class="comment"></p>{{ node.text }}
+                <a href="" data-toggle="modal" data-target="#comment-reply">Odpowiedz</a>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+
+    <h2>Napisz komentarz</h2>
+    {% load crispy_forms_tags %}
+
+    {% crispy add-comment %}
 
 
-{% load mptt_tags %}
-<ul>
-    {% recursetree comments %}
-        <li>
-            {{ node.author }}<br />
-            {{ node.text }}
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    {{ children }}
-                </ul>
-            {% endif %}
-            <form action="." method="post">
-                {% csrf_token %}
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="comment-reply">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Odpowiedz na komentarz</h4>
+                </div>
+                <div class="modal-body">
+                    {% crispy reply-comment %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-            </form>
-        </li>
-    {% endrecursetree %}
-</ul>
 
-<h2>Zostaw komentarz</h2>
-<form action="." method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Wyślij" />
-</form>
+{% endblock content %}
+
+{% block custom_scripts %}
+    <script>
+        $('#reply-comment-button').submit(function (e) {
+            e.preventDefault();
+            // Coding
+            $('#comment-reply').modal('toggle');
+            return false;
+        });
+    </script>
+{% endblock custom_scripts %}

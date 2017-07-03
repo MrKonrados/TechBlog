@@ -1,6 +1,6 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.edit import ModelFormMixin
+
 from django.shortcuts import redirect
 
 from .models import *
@@ -12,16 +12,18 @@ class PostList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PostList, self).get_context_data(**kwargs)
+        context['title'] = "To jest lista postów"
         return context
 
 
-class PostDetail(ModelFormMixin, DetailView):
+class PostDetail(DetailView):
     model = Post
-    form_class = CommentForm
+    # form_class = CommentForm
 
     def get_context_data(self, **kwargs):
         context = super(PostDetail, self).get_context_data(**kwargs)
-        context['form'] = self.get_form(self.form_class)
+        context['add-comment'] = CommentForm(prefix="add-comment")
+        context['reply-comment'] = CommentForm(prefix="reply-comment")
         context['comments'] = Comment.objects.all()
         return context
 
